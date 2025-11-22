@@ -1,0 +1,1 @@
+"""Weather application entry points."""

@@ -1,0 +1,13 @@
+requests>=2.31
+python-dotenv>=1.0
+rich>=13.7
+Flask>=3.0
+FastAPI>=0.111
+uvicorn[standard]>=0.30
+PyQt5>=5.15
+geocoder>=1.38
+SpeechRecognition>=3.10
+pyttsx3>=2.90
+openai>=1.6
+geopy>=2.4
+typer>=0.12

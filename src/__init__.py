@@ -1,0 +1,1 @@
+"""Weather applications package."""
