@@ -150,4 +150,16 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    import os
+    
+    if os.environ.get("RENDER"):
+        # Non-interactive environment → run Flask instead of menu
+        from app import app
+        app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    else:
+        # Local interactive menu
+        main()
+
+
+
+                    
