@@ -69,15 +69,7 @@ python manage.py desktop
 
 ## 🚀 Deployment
 
-### Deploy to Render
-
-[![Deployed on Render]
-
-1. Click the "Deploy to Render" button above
-2. Connect your GitHub account
-3. Set the following environment variables:
-   - `WEATHER_API_KEY`: Your OpenWeatherMap API key
-   - `PYTHON_VERSION`: `3.9.0`
+### Deployed on Render
 
 ## 📁 Project Structure
 
