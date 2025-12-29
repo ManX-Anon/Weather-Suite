@@ -12,44 +12,44 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 APP_DEFINITIONS: Dict[str, Dict[str, object]] = {
     "basic-cli": {
         "module": "src.apps.basic_terminal",
-        "description": "Prompt 1 – basic terminal app",
+        "description": " basic terminal app",
     },
     "advanced-cli": {
         "module": "src.apps.advanced_terminal",
-        "description": "Prompt 2 – Rich formatting + multiple cities",
+        "description": " Rich formatting + multiple cities",
     },
     "cli": {
         "module": "src.apps.cli",
-        "description": "Prompt 10 – argparse-based CLI",
+        "description": " argparse-based CLI",
     },
     "geolocation": {
         "module": "src.apps.geolocation_app",
-        "description": "Prompt 7 – auto-detect location + forecast",
+        "description": " auto-detect location + forecast",
     },
     "voice": {
         "module": "src.apps.voice_app",
-        "description": "Prompt 8 – speech input/output",
+        "description": " speech input/output",
     },
     "ai-assistant": {
         "module": "src.apps.ai_assistant",
-        "description": "Prompt 9 – OpenAI powered tips",
+        "description": " OpenAI powered tips",
         "needs_openai": True,
     },
     "tkinter": {
         "module": "src.apps.tkinter_app",
-        "description": "Prompt 3 – Tkinter GUI",
+        "description": " Tkinter GUI",
     },
     "pyqt": {
         "module": "src.apps.pyqt_app",
-        "description": "Prompt 4 – PyQt5 GUI",
+        "description": " PyQt5 GUI",
     },
     "flask": {
         "module": "src.apps.flask_app",
-        "description": "Prompt 5 – Flask frontend/backend",
+        "description": " Flask frontend/backend",
     },
     "fastapi": {
         "module": "src.apps.fastapi_service",
-        "description": "Prompt 6 – FastAPI microservice",
+        "description": " FastAPI microservice",
     },
 }
 
