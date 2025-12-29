@@ -8,8 +8,5 @@ services:
       - key: PYTHON_VERSION
         value: 3.9.0
       - key: WEATHER_API_KEY
-        fromService:
-          name: weather-app
-          type: env
-          property: WEATHER_API_KEY
+        sync: false
     plan: free
