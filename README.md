@@ -71,7 +71,7 @@ python manage.py desktop
 
 ### Deploy to Render
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+[![Deployed on Render]
 
 1. Click the "Deploy to Render" button above
 2. Connect your GitHub account
