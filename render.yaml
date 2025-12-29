@@ -10,3 +10,7 @@ services:
       - key: WEATHER_API_KEY
         sync: false
     plan: free
+    aptDeps:
+      - qt5-qmake
+      - qt5-default
+      - build-essential
