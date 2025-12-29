@@ -4,7 +4,7 @@ rich>=13.7
 Flask>=3.0
 FastAPI>=0.111
 uvicorn[standard]>=0.30
-PyQt5>=5.15
+PyQt5>=5.15 ; sys_platform != 'linux' or platform_machine != 'x86_64'
 geocoder>=1.38
 SpeechRecognition>=3.10
 pyttsx3>=2.90
