@@ -1,13 +1,13 @@
 """Wrapper around the OpenWeatherMap API."""
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import requests
 
-from src.config.settings import Settings, get_settings
 from src.utils.exceptions import (
     MissingAPIKeyError,
     NetworkError,
@@ -15,6 +15,9 @@ from src.utils.exceptions import (
 )
 
 
+# ---------------------------------------------------------------------
+# Data models
+# ---------------------------------------------------------------------
 @dataclass
 class WeatherData:
     city: str
@@ -52,6 +55,9 @@ class ForecastEntry:
         return datetime.fromtimestamp(self.timestamp)
 
 
+# ---------------------------------------------------------------------
+# API client
+# ---------------------------------------------------------------------
 class WeatherAPI:
     """Simple OpenWeatherMap API client."""
 
@@ -59,65 +65,46 @@ class WeatherAPI:
 
     def __init__(
         self,
-        settings: Optional[Settings] = None,
         session: Optional[requests.Session] = None,
-        units: Optional[str] = None,
-        language: Optional[str] = None,
+        units: str = "metric",
+        language: str = "en",
     ) -> None:
-        self.settings = settings or get_settings()
+        self.api_key = os.getenv("OPENWEATHER_API_KEY")
+
+        if not self.api_key:
+            raise MissingAPIKeyError(
+                "OPENWEATHER_API_KEY is required. "
+                "Set it in Render → Environment Variables."
+            )
+
         self.session = session or requests.Session()
-        self.units = units or self.settings.default_units
-        self.language = language or self.settings.language
+        self.units = units
+        self.language = language
 
     # ------------------------------------------------------------------
     # Public helpers
     # ------------------------------------------------------------------
-    def get_current_weather(
-        self,
-        city: str,
-        *,
-        units: Optional[str] = None,
-        lang: Optional[str] = None,
-    ) -> WeatherData:
-        payload = self._request("weather", {"q": city}, units=units, lang=lang)
+    def get_current_weather(self, city: str) -> WeatherData:
+        payload = self._request("weather", {"q": city})
         return self._parse_current(payload)
 
-    def get_hourly_forecast(
-        self,
-        city: str,
-        hours: int = 12,
-        *,
-        units: Optional[str] = None,
-        lang: Optional[str] = None,
-    ) -> List[ForecastEntry]:
-        payload = self._request("forecast", {"q": city}, units=units, lang=lang)
+    def get_hourly_forecast(self, city: str, hours: int = 12) -> List[ForecastEntry]:
+        payload = self._request("forecast", {"q": city})
         entries = [self._parse_forecast_entry(item) for item in payload.get("list", [])]
         return entries[:hours]
 
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
-    def _request(
-        self,
-        endpoint: str,
-        params: Dict[str, Any],
-        *,
-        units: Optional[str] = None,
-        lang: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        if not self.settings.has_openweather_key:
-            raise MissingAPIKeyError(
-                "OPENWEATHER_API_KEY is required. Provide it via environment variables or .env file."
-            )
-
+    def _request(self, endpoint: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        url = f"{self.BASE_URL}/{endpoint}"
         request_params = {
-            "appid": self.settings.openweather_api_key,
-            "units": units or self.units,
-            "lang": lang or self.language,
+            "appid": self.api_key,
+            "units": self.units,
+            "lang": self.language,
             **params,
         }
 
-        url = f"{self.BASE_URL}/{endpoint}"
         try:
             response = self.session.get(url, params=request_params, timeout=15)
             response.raise_for_status()
@@ -125,9 +112,9 @@ class WeatherAPI:
             raise NetworkError("Unable to reach OpenWeatherMap.") from exc
 
         payload = response.json()
-        if response.status_code >= 400 or payload.get("cod") not in (200, "200"):
-            message = payload.get("message", "Unknown error")
-            raise WeatherAPIError(message)
+        if payload.get("cod") not in (200, "200"):
+            raise WeatherAPIError(payload.get("message", "Unknown error"))
+
         return payload
 
     @staticmethod
@@ -138,7 +125,14 @@ class WeatherAPI:
         sys_info = payload.get("sys", {})
         rain = payload.get("rain", {})
         snow = payload.get("snow", {})
-        precipitation = rain.get("1h") or rain.get("3h") or snow.get("1h") or snow.get("3h") or 0.0
+
+        precipitation = (
+            rain.get("1h")
+            or rain.get("3h")
+            or snow.get("1h")
+            or snow.get("3h")
+            or 0.0
+        )
 
         return WeatherData(
             city=payload.get("name", "Unknown"),
@@ -159,6 +153,7 @@ class WeatherAPI:
     def _parse_forecast_entry(payload: Dict[str, Any]) -> ForecastEntry:
         weather = payload.get("weather", [{}])[0]
         main = payload.get("main", {})
+
         return ForecastEntry(
             timestamp=int(payload.get("dt", 0)),
             temperature=float(main.get("temp", 0.0)),
