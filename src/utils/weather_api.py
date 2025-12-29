@@ -15,7 +15,7 @@ from src.utils.exceptions import (
 )
 
 
-@dataclass(slots=True)
+@dataclass
 class WeatherData:
     city: str
     temperature: float
