@@ -39,7 +39,7 @@ class WeatherData:
         return datetime.fromtimestamp(self.sunset)
 
 
-@dataclass(slots=True)
+@dataclass
 class ForecastEntry:
     timestamp: int
     temperature: float
