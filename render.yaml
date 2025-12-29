@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: weather-app
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn -c gunicorn_config.py 'src.apps.flask_app:create_app()'"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: WEATHER_API_KEY
+        fromService:
+          name: weather-app
+          type: env
+          property: WEATHER_API_KEY
+    plan: free
